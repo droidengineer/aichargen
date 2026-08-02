@@ -24,7 +24,7 @@ export default function CharacterGenerator() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-4-6",
           max_tokens: 8000,
           messages: [
             {
@@ -241,7 +241,7 @@ The 5 scenario descriptions should each be 200-300 characters and showcase diffe
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-4-6",
           max_tokens: 1000,
           messages: [
             {
