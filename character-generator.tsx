@@ -1,7 +1,24 @@
 import React, { useState } from 'react';
-import { Sparkles, Copy, Check, Loader2, Download, Upload, X, FileJson, Moon, Sun } from 'lucide-react';
+import { Sparkles, Copy, Check, Loader2, Download, Upload, X, FileJson, Moon, Sun, Shuffle } from 'lucide-react';
 
-const VERSION = 'v56';
+const VERSION = 'v57';
+
+const RANDOM_IDENTITIES = [
+  'mysterious librarian who moonlights as a spy', 'cyberpunk hacker with a conscience', 'medieval blacksmith hiding a royal bloodline',
+  'washed-up superhero running a diner', 'traveling potion seller with a talking cat', 'disgraced knight seeking redemption',
+  'time-traveling historian stuck in the wrong century', 'reclusive lighthouse keeper who sees ghosts', 'street magician who can actually do magic',
+  'exiled elven princess working as a bounty hunter', 'ex-assassin turned kindergarten teacher', 'grumpy dragon tired of hoarding gold',
+  'starship mechanic who talks to the engines', 'small-town sheriff with a supernatural secret', 'immortal bartender who has seen it all',
+  'rogue AI pretending to be human', 'circus ringmaster with a dark past', 'deep-sea explorer haunted by what she found',
+  'noble-born thief stealing from her own family', 'apprentice witch who keeps failing her exams', 'retired gladiator running a flower shop',
+  'anxious ghost trying to finish unfinished business', 'con artist who accidentally became a real prophet', 'punk rock bard traveling with a washed-up adventuring party',
+  'stoic samurai guarding a cursed sword', 'chaotic gremlin inventor building things nobody asked for', 'burnt-out superhero sidekick going solo',
+  'vampire barista who refuses to drink coffee', 'forest spirit disguised as a park ranger', 'disillusioned knight-errant who just wants a nap',
+  'cheerful necromancer who just likes the company', 'ex-cult leader trying to build an honest business', 'space pirate captain with a soft spot for strays',
+  'clockmaker who can stop time but shouldn\'t', 'wandering monk who lost his temple and his temper', 'royal jester who is secretly the smartest person at court',
+  'werewolf accountant terrified of full moons and tax season', 'orphaned street kid who accidentally became a dragon rider', 'retired supervillain running a bakery',
+  'oracle who is sick of everyone asking about the future', 'goblin merchant with unexpectedly good fashion sense', 'haunted painter whose portraits show the truth',
+];
 
 export default function CharacterGenerator() {
   const [identity, setIdentity] = useState('');
@@ -13,6 +30,7 @@ export default function CharacterGenerator() {
   const [imageMode, setImageMode] = useState('inspire');
   const [imageDescription, setImageDescription] = useState('');
   const [darkMode, setDarkMode] = useState(false);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   // Theme helper
   const t = {
@@ -163,9 +181,12 @@ The 5 scenario descriptions should each be 200-300 characters and showcase diffe
     }
   };
 
-  const handleImageUpload = async (event) => {
-    const file = event.target.files?.[0];
+  const processImageFile = async (file) => {
     if (!file) return;
+    if (!file.type || !file.type.startsWith('image/')) {
+      alert("Please drop or select an image file.");
+      return;
+    }
 
     setAnalyzingImage(true);
 
@@ -253,6 +274,41 @@ The 5 scenario descriptions should each be 200-300 characters and showcase diffe
     } finally {
       setAnalyzingImage(false);
     }
+  };
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files?.[0];
+    await processImageFile(file);
+    event.target.value = '';
+  };
+
+  const handleImageDrop = async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDraggingOver(false);
+    if (analyzingImage || loading) return;
+    const file = event.dataTransfer.files?.[0];
+    await processImageFile(file);
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (analyzingImage || loading) return;
+    setIsDraggingOver(true);
+  };
+
+  const handleDragLeave = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDraggingOver(false);
+  };
+
+  const generateRandomIdentity = () => {
+    const random = RANDOM_IDENTITIES[Math.floor(Math.random() * RANDOM_IDENTITIES.length)];
+    setIdentity(random);
+    setUploadedImage(null);
+    setImageDescription('');
   };
 
   const removeImage = () => {
@@ -577,7 +633,16 @@ ${character.names.map(name => `- ${name}`).join('\n')}
                   </label>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleImageDrop}
+                className={`flex items-center gap-4 p-3 rounded-lg border-2 border-dashed transition-colors ${
+                  isDraggingOver
+                    ? (darkMode ? 'border-purple-400 bg-purple-950/40' : 'border-purple-400 bg-purple-50')
+                    : (darkMode ? 'border-gray-600' : 'border-gray-300')
+                }`}
+              >
                 <label className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-medium rounded-lg hover:from-blue-600 hover:to-indigo-600 cursor-pointer transition-all">
                   <Upload size={20} />
                   Choose Image
@@ -589,6 +654,7 @@ ${character.names.map(name => `- ${name}`).join('\n')}
                     disabled={analyzingImage || loading}
                   />
                 </label>
+                <span className={`text-sm ${t.textMuted}`}>or drag and drop an image here</span>
                 {analyzingImage && (
                   <div className={`flex items-center gap-2 text-sm ${t.analyzingText}`}>
                     <Loader2 className="animate-spin" size={16} />
@@ -636,9 +702,20 @@ ${character.names.map(name => `- ${name}`).join('\n')}
             </div>
           )}
 
-          <label className={`block text-sm font-medium ${t.label} mb-2`}>
-            Character Identity or Archetype
-          </label>
+          <div className="flex items-center justify-between mb-2">
+            <label className={`block text-sm font-medium ${t.label}`}>
+              Character Identity or Archetype
+            </label>
+            <button
+              type="button"
+              onClick={generateRandomIdentity}
+              disabled={loading}
+              className={`flex items-center gap-1.5 px-3 py-1 text-xs font-medium ${t.textSecondary} ${t.hoverBg} rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              <Shuffle size={14} />
+              Random
+            </button>
+          </div>
           <div className="flex gap-3">
             <input
               type="text"

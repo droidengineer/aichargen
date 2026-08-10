@@ -25,6 +25,8 @@
 ## Image Upload Modes
 - **"Inspire me!"** (default): Generates character identity/archetype from image
 - **"Use me"**: Extracts detailed physical description as appearance reference
+- **Drag-and-drop**: Images can be dropped directly onto the upload zone, in addition to the file picker, for either mode
+- **Random Identity**: One-click button generates a random character identity/archetype without needing an image or manual typing
 
 ## Quality Features
 - **Character Count Tracking**: Visual indicators for greeting, inner, and outer descriptions
@@ -49,6 +51,10 @@
 This is a complete character creation suite perfect for writers, game developers, roleplayers, and creative professionals who need detailed, consistent character profiles.
 
 ## Changelog
+
+### v57
+- Added drag-and-drop support to the image upload zone: the "Choose Image" area is now a droppable region (with dashed-border highlight on drag-over) that works for both "Inspire me!" and "Use me" modes, reusing the same resize/analysis pipeline as the file picker (refactored into a shared `processImageFile` function).
+- Added a "Random" button next to the Character Identity input that instantly fills the field with a randomly selected character identity/archetype from a curated list of 40 varied concepts, clearing any active image reference. No API call required for this feature.
 
 ### v56
 - Replaced the header avatar image with the user-supplied photo (embedded as a base64 data URI directly in the component), replacing the previous flipped.chat CDN-hosted placeholder image. No other functional, UI, or schema changes were made.
