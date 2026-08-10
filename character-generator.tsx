@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, Copy, Check, Loader2, Download, Upload, X, FileJson, Moon, Sun } from 'lucide-react';
 
-const VERSION = 'v54';
+const VERSION = 'v55';
 
 export default function CharacterGenerator() {
   const [identity, setIdentity] = useState('');
@@ -58,10 +58,10 @@ export default function CharacterGenerator() {
 
   const generateCharacter = async () => {
     if (!identity.trim()) return;
-    
+
     setLoading(true);
     setCharacter(null);
-    
+
     try {
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
@@ -69,7 +69,7 @@ export default function CharacterGenerator() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-6",
+          model: "claude-sonnet-5",
           max_tokens: 8000,
           messages: [
             {
@@ -141,7 +141,7 @@ The 5 scenario descriptions should each be 200-300 characters and showcase diffe
         .filter(item => item.type === "text")
         .map(item => item.text)
         .join("");
-      
+
       const cleanText = text.replace(/```json|```/g, "").trim();
       const parsed = JSON.parse(cleanText);
       setCharacter(parsed);
@@ -205,7 +205,7 @@ The 5 scenario descriptions should each be 200-300 characters and showcase diffe
 
       setUploadedImage(result.dataUrl);
 
-      const promptText = imageMode === 'inspire' 
+      const promptText = imageMode === 'inspire'
         ? "Analyze this image and create a concise character identity/archetype description (10-15 words max) that captures the essence of this character. Focus on their role, personality traits, setting, or distinctive characteristics. Just return the identity phrase, nothing else."
         : "Analyze this image and create a detailed physical character description (200-300 words) describing their appearance, clothing, body language, facial features, and any distinctive characteristics you observe. This will be used as reference material for character generation. Return only the description, nothing else.";
 
@@ -215,7 +215,7 @@ The 5 scenario descriptions should each be 200-300 characters and showcase diffe
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-6",
+          model: "claude-sonnet-5",
           max_tokens: 1000,
           messages: [
             {
@@ -234,7 +234,7 @@ The 5 scenario descriptions should each be 200-300 characters and showcase diffe
 
       const data = await response.json();
       if (data.type === 'error') throw new Error(data.error.message || 'API returned an error');
-      
+
       const generatedText = data.content
         .filter(item => item.type === "text")
         .map(item => item.text)
@@ -453,8 +453,8 @@ ${character.names.map(name => `- ${name}`).join('\n')}
           <h3 className={`text-lg font-semibold ${t.textPrimary}`}>{title}</h3>
           {maxChars && (
             <span className={`text-sm font-medium ${
-              content.length > maxChars ? 'text-red-500' : 
-              content.length > maxChars * 0.9 ? 'text-amber-500' : 
+              content.length > maxChars ? 'text-red-500' :
+              content.length > maxChars * 0.9 ? 'text-amber-500' :
               t.textMuted
             }`}>
               {content.length}/{maxChars}
