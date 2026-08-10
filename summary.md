@@ -36,19 +36,32 @@
 ## User Experience
 - **Responsive Design**: Works on desktop and mobile devices
 - **Modern UI**: Gradient themes, smooth animations, color-coded sections
+- **Light/Dark Mode Toggle**: Full dark mode with themed cards, inputs, and color-coded prompt sections
+- **Branded Header**: Avatar bubble (Scribe) + "Scribe's AI Character Generator" title
 - **Clickable Variations**: Generate new characters from suggested alternatives
 - **Progress Indicators**: Loading states for AI generation and image analysis
 - **Flipped.chat Integration**: Direct link for image prompt usage
+- **Version Display**: Internal version constant shown in small text at page footer
 
 ## Technical Capabilities
 - **High Token Limit**: 8000 tokens for comprehensive character generation
 - **Structured JSON Output**: Consistent, parseable character data
 - **Character Limits Enforcement**: Prevents API over-generation
 - **Cross-platform Compatibility**: Works in modern web browsers
+- **Internal Version String**: `VERSION` constant at top of file; rendered in footer
 
 This is a complete character creation suite perfect for writers, game developers, roleplayers, and creative professionals who need detailed, consistent character profiles.
 
 ## Changelog
+
+### v54
+- Added `VERSION` constant (`'v54'`) at the top of the file; displayed in small muted text at the bottom of the page.
+- Replaced the plain Sparkles-icon header with a branded header row containing:
+  - A circular avatar bubble (44×44px with purple border) using the Scribe CDN image URL.
+  - Updated title to **"Scribe's AI Character Generator"** (gradient unchanged).
+  - Subtitle retained as-is, now placed directly beneath the title.
+- Added a **light/dark mode toggle** button (Sun/Moon icons) anchored to the right of the header row. Clicking it switches the entire UI between a light (default) and dark theme — backgrounds, cards, inputs, text colours, prompt category panels, tag pills, variation cards, scenario blocks, and name pills all respond to the `darkMode` state via a `t` (theme) object.
+- No changes to AI prompts, API calls, export logic, or schema.
 
 ### v53
 - Updated the Anthropic API model string in both `fetch` calls (character generation and image analysis) from the dated snapshot `claude-sonnet-4-20250514` to the current dateless model ID `claude-sonnet-4-6`, keeping the artifact aligned with the latest Sonnet release. No functional, UI, or schema changes were made.
