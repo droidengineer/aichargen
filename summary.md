@@ -50,6 +50,9 @@ This is a complete character creation suite perfect for writers, game developers
 
 ## Changelog
 
+### v56
+- Replaced the header avatar image with the user-supplied photo (embedded as a base64 data URI directly in the component), replacing the previous flipped.chat CDN-hosted placeholder image. No other functional, UI, or schema changes were made.
+
 ### v55
 - Updated the Anthropic API model string in both `fetch` calls (character generation and image analysis) from `claude-sonnet-4-6` to `claude-sonnet-5`, aligning the artifact with the current Sonnet release. No functional, UI, or schema changes were made.
 
